@@ -1,0 +1,32 @@
+# =========================================================================
+# Policies - risk limits & kill switches. Agent may nudge these via
+# `update_policy` (future) but only WITHIN bounds (can't raise beyond
+# hard_max). Owner edits this file directly for hard changes.
+# =========================================================================
+tx_limits:
+  max_tx_usd: 50            # runtime-adjustable
+  hard_max_tx_usd: 500      # agent cannot exceed this
+  require_mainnet_confirm_string: "CONFIRM MAINNET"
+
+simulate_by_default: true
+allow_eip1559: true
+
+# Kill switches: set true to disable a whole skill family at runtime.
+# Owner can toggle via `/disable <family>` in Telegram.
+disabled_skill_families: []
+
+# Social pacing (seconds between consecutive calls per platform).
+social_pacing:
+  x:        { min: 8,  max: 22 }
+  telegram: { min: 5,  max: 15 }
+  discord:  { min: 6,  max: 18 }
+
+# Self-development guardrails.
+self_dev:
+  allow_add_rpc: true
+  allow_create_wallet: true
+  allow_add_contact: true
+  # `propose_skill` only writes a spec. Never auto-loads code.
+  allow_propose_skill: true
+  # Max fresh wallets the agent can create per 24h without re-confirming.
+  max_new_wallets_per_day: 10

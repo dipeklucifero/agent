@@ -1,0 +1,17 @@
+services:
+  agent:
+    build: .
+    container_name: hermes-agent
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config
+    # Low-mem VPS friendly: cap so runaway Python doesn't OOM the host.
+    mem_limit: 1400m
+    cpus: 1.8
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
