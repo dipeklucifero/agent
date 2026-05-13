@@ -8,7 +8,7 @@ readme = "README.md"
 dependencies = [
     # LLM
     "openai>=1.40.0",                 # OpenRouter uses OpenAI-compatible API
-
+ 
     # Telegram
     "python-telegram-bot[job-queue]>=21.0",
     "telethon>=1.36.0",               # optional userbot for group joins
