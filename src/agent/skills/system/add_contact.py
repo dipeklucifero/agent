@@ -23,7 +23,7 @@ class AddContactOutput(BaseModel):
 
 
 class AddContactSkill(Skill):
-    name = "system.add_contact"
+    name = "system_add_contact"
     family = "system"
     description = "Add a labelled address to the contacts book for later reference."
     Input = AddContactInput

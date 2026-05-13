@@ -20,7 +20,7 @@ class BalanceInput(BaseModel):
     wallet_label: str | None = Field(
         default=None,
         description=(
-            "Wallet label from system.list_wallets. If omitted, `address` must "
+            "Wallet label from system_list_wallets. If omitted, `address` must "
             "be provided. Use label for burner wallets, address for anyone else."
         ),
     )
@@ -48,11 +48,11 @@ class BalanceOutput(BaseModel):
     address: str
     kind: str
     results: list[ChainBalance]
-    errors: dict[str, str] = {}
+    errors: dict[str, str] = Field(default_factory=dict)
 
 
 class BalanceSkill(Skill):
-    name = "wallet.balance"
+    name = "wallet_balance"
     family = "wallet"
     description = (
         "Read native-token balance for a wallet across one or more chains. "
@@ -103,7 +103,7 @@ class BalanceSkill(Skill):
                     )
                 elif chain.kind == "solana" and sol_pool is not None:
                     raw = await asyncio.to_thread(sol_pool.balance_lamports, slug, address)
-                    human = str(Decimal(raw) / Decimal(10**9))
+                    human = _lamports_to_sol(raw)
                     results.append(
                         ChainBalance(
                             chain=slug, symbol=chain.native_symbol or "SOL",
@@ -143,5 +143,17 @@ def _infer_kind(address: str) -> str:
 
 
 def _wei_to_eth(wei: int) -> str:
-    # 18 decimals, trimmed. Good enough for display.
-    return str((Decimal(wei) / Decimal(10**18)).normalize())
+    """Fixed-point decimal, no scientific notation. 18 decimals."""
+    if wei == 0:
+        return "0"
+    d = Decimal(wei) / Decimal(10**18)
+    s = f"{d:.18f}".rstrip("0").rstrip(".")
+    return s or "0"
+
+
+def _lamports_to_sol(lamports: int) -> str:
+    if lamports == 0:
+        return "0"
+    d = Decimal(lamports) / Decimal(10**9)
+    s = f"{d:.9f}".rstrip("0").rstrip(".")
+    return s or "0"

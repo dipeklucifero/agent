@@ -216,9 +216,14 @@ def _disabled_families() -> set[str]:
 
 
 def _assistant_msg_to_dict(msg) -> dict:
-    """Convert openai SDK ChatCompletionMessage to a dict suitable for replay."""
-    out: dict[str, Any] = {"role": "assistant", "content": msg.content or ""}
+    """Convert openai SDK ChatCompletionMessage to a dict suitable for replay.
+
+    When the assistant calls tools, Hermes/OpenAI expect content=None (not ""),
+    otherwise some providers return a 400 on the next round-trip.
+    """
+    out: dict[str, Any] = {"role": "assistant"}
     if msg.tool_calls:
+        out["content"] = msg.content  # may be None
         out["tool_calls"] = [
             {
                 "id": c.id,
@@ -230,6 +235,8 @@ def _assistant_msg_to_dict(msg) -> dict:
             }
             for c in msg.tool_calls
         ]
+    else:
+        out["content"] = msg.content or ""
     return out
 
 

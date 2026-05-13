@@ -20,13 +20,13 @@ from ...config import get_settings, load_policies
 from ..base import Skill, SkillContext, SkillDenied, SkillError
 
 
-_NAME_RE = re.compile(r"^[a-z][a-z0-9_.]{1,63}$")
+_NAME_RE = re.compile(r"^[a-z][a-z0-9_]{1,63}$")
 
 
 class ProposeSkillInput(BaseModel):
     name: str = Field(
         ...,
-        description="Proposed skill name, dotted snake_case e.g. 'bridge.sepolia_to_base'.",
+        description="Proposed skill name, snake_case e.g. 'bridge_sepolia_to_base'.",
     )
     family: str = Field(..., description="Kill-switch family, e.g. 'bridge'.")
     description: str = Field(..., min_length=10)
@@ -47,7 +47,7 @@ class ProposeSkillOutput(BaseModel):
 
 
 class ProposeSkillSkill(Skill):
-    name = "system.propose_skill"
+    name = "system_propose_skill"
     family = "system"
     description = (
         "Draft a spec for a proposed new skill. Writes a markdown file to "

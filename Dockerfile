@@ -6,8 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# System deps: build-essential only needed if any pure-Python wheel is missing.
-# libsecp256k1 headers help eth-account build fast on slim.
+# libsecp256k1-dev speeds up eth-account wheels; rest is build toolchain.
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         libssl-dev \
@@ -16,15 +15,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Install deps first for layer cache.
+# Copy the package first (hatchling needs src/ to build the wheel) then install.
+# One install keeps the image small on a 40GB VPS.
 COPY pyproject.toml README.md ./
-RUN pip install --upgrade pip && pip install .
-
 COPY src ./src
 COPY config ./config
-RUN mkdir -p /app/data
 
-RUN pip install .
+RUN pip install --upgrade pip && pip install .
+
+RUN mkdir -p /app/data
 
 # Data (SQLite, keystore) lives on a mounted volume.
 VOLUME ["/app/data", "/app/config"]

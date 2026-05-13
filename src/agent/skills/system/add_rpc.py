@@ -52,7 +52,7 @@ class AddRpcOutput(BaseModel):
 
 
 class AddRpcSkill(Skill):
-    name = "system.add_rpc"
+    name = "system_add_rpc"
     family = "system"
     description = (
         "Add a new RPC endpoint to an existing chain, or register a brand-new "
@@ -134,8 +134,8 @@ class AddRpcSkill(Skill):
 
 
 async def _probe(url: str, kind: str, expected_chain_id: int | None) -> tuple[bool, str]:
-    """Quick liveness check for an RPC endpoint. 5s budget."""
-    async with httpx.AsyncClient(timeout=5.0) as http:
+    """Quick liveness check for an RPC endpoint. 10s budget (some testnets are slow)."""
+    async with httpx.AsyncClient(timeout=10.0) as http:
         try:
             if kind == "evm":
                 r = await http.post(

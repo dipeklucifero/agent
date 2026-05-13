@@ -24,7 +24,7 @@ class ListWalletsOutput(BaseModel):
 
 
 class ListWalletsSkill(Skill):
-    name = "system.list_wallets"
+    name = "system_list_wallets"
     family = "system"
     description = "List all burner wallets (public addresses only)."
     Input = ListWalletsInput

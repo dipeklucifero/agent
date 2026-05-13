@@ -5,9 +5,10 @@ Boot order:
   2. init SQLite schema
   3. build web3 client pools (lazy - no RPC hit at boot)
   4. load skill registry (auto-discovers all submodules)
-  5. start APScheduler
-  6. build HermesAgent with its deps
-  7. build Telegram Application, attach audit sink
+  5. build HermesAgent
+  6. build Telegram Application
+  7. attach scheduler.start() to Application.post_init (runs inside PTB's
+     asyncio loop, which is what APScheduler's AsyncIOScheduler requires)
   8. run_polling (blocks)
 """
 
@@ -17,6 +18,7 @@ import logging
 import sys
 
 import structlog
+from telegram.ext import Application
 
 from .config import get_settings
 from .interfaces.telegram_bot import build_application, make_audit_sink
@@ -33,7 +35,6 @@ def _configure_logging() -> None:
         format="%(asctime)s %(levelname)s %(name)s: %(message)s",
         stream=sys.stdout,
     )
-    # Tame the noisiest libs.
     for noisy in ("httpx", "httpcore", "telegram.ext", "apscheduler"):
         logging.getLogger(noisy).setLevel(logging.WARNING)
     structlog.configure(
@@ -77,7 +78,6 @@ def main() -> None:
     scheduler = AgentScheduler(registry, deps)
     deps.scheduler = scheduler
     register_runtime(registry, deps)
-    scheduler.start()
 
     working = WorkingMemory()
     agent = HermesAgent(registry=registry, working=working, deps=deps)
@@ -86,6 +86,19 @@ def main() -> None:
     audit = make_audit_sink(app)
     if audit is not None:
         deps.audit_sink = audit
+
+    # AsyncIOScheduler must attach to a running event loop. PTB's post_init
+    # hook runs after the asyncio loop is up but before polling starts.
+    async def _post_init(_app: Application) -> None:
+        scheduler.start()
+        log.info("scheduler started with %d persisted jobs",
+                 len(scheduler.list_jobs()))
+
+    async def _post_shutdown(_app: Application) -> None:
+        scheduler.shutdown()
+
+    app.post_init = _post_init
+    app.post_shutdown = _post_shutdown
 
     log.info("hermes-agent ready; polling Telegram")
     app.run_polling(allowed_updates=["message"])
