@@ -103,6 +103,9 @@ def register_runtime(registry: SkillRegistry, deps: Any) -> None:
 
 
 async def _run_skill_wrapper(skill_name: str, args: dict[str, Any]) -> None:
+    if "registry" not in _ACTIVE:
+        log.error("scheduled skill %s fired before register_runtime()", skill_name)
+        return
     registry: SkillRegistry = _ACTIVE["registry"]
     deps = _ACTIVE["deps"]
     ctx = SkillContext(

@@ -35,7 +35,7 @@ class CreateWalletOutput(BaseModel):
 
 
 class CreateWalletSkill(Skill):
-    name = "system.create_wallet"
+    name = "system_create_wallet"
     family = "system"
     description = (
         "Generate a new burner wallet for EVM or Solana and store the private "
