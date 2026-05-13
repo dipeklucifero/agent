@@ -1,0 +1,32 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Runtime state - NEVER commit
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+keystore/
+*.key
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Build
+dist/
+build/
+*.egg
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/

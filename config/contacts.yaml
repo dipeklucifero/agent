@@ -1,0 +1,8 @@
+# Address book. Agent-editable via `add_contact` skill.
+# Format:
+#   contacts:
+#     - label: "my-other-burner"
+#       address: "0x..."
+#       chain_kind: evm  # or solana
+#       notes: "optional"
+contacts: []

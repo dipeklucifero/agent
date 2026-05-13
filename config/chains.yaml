@@ -1,0 +1,67 @@
+# =========================================================================
+# Chains - RPC endpoints and metadata. Agent-editable via `add_rpc` skill.
+# kind: evm | solana
+# is_testnet: true | false - used by policy to gate mainnet confirms
+# =========================================================================
+chains:
+  ethereum_sepolia:
+    kind: evm
+    chain_id: 11155111
+    name: "Ethereum Sepolia"
+    is_testnet: true
+    rpc_urls:
+      - "https://ethereum-sepolia-rpc.publicnode.com"
+      - "https://rpc.sepolia.org"
+    explorer: "https://sepolia.etherscan.io"
+    native_symbol: "ETH"
+
+  base_sepolia:
+    kind: evm
+    chain_id: 84532
+    name: "Base Sepolia"
+    is_testnet: true
+    rpc_urls:
+      - "https://sepolia.base.org"
+      - "https://base-sepolia-rpc.publicnode.com"
+    explorer: "https://sepolia.basescan.org"
+    native_symbol: "ETH"
+
+  base:
+    kind: evm
+    chain_id: 8453
+    name: "Base"
+    is_testnet: false
+    rpc_urls:
+      - "https://mainnet.base.org"
+      - "https://base-rpc.publicnode.com"
+    explorer: "https://basescan.org"
+    native_symbol: "ETH"
+
+  monad_testnet:
+    kind: evm
+    chain_id: 10143
+    name: "Monad Testnet"
+    is_testnet: true
+    rpc_urls:
+      - "https://testnet-rpc.monad.xyz"
+    explorer: "https://testnet.monadexplorer.com"
+    native_symbol: "MON"
+
+  megaeth_testnet:
+    kind: evm
+    chain_id: 6342
+    name: "MegaETH Testnet"
+    is_testnet: true
+    rpc_urls:
+      - "https://carrot.megaeth.com/rpc"
+    explorer: "https://megaexplorer.xyz"
+    native_symbol: "ETH"
+
+  solana_devnet:
+    kind: solana
+    name: "Solana Devnet"
+    is_testnet: true
+    rpc_urls:
+      - "https://api.devnet.solana.com"
+    explorer: "https://explorer.solana.com?cluster=devnet"
+    native_symbol: "SOL"
