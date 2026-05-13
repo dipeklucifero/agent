@@ -7,7 +7,7 @@ venv/
 .env
 .env.*
 !.env.example
- 
+
 # Runtime state - NEVER commit
 data/
 *.db
